@@ -1,0 +1,124 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
+        maven { url = 'https://plugins.gradle.org/m2' }
+        maven { url = 'https://jitpack.io' }
+
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
+
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+version = '1.2.0'
+group = 'blu3.ruhamaplus'
+archivesBaseName = 'RuhamaPlus'
+
+// if you dont have this it fucks up intellij real bad for some reason
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+minecraft {
+    version = project.forgeVersion
+    runDir = 'run'
+    coreMod = 'blu3.ruhamaplus.mixin.mixins.LoadingPlugin'
+    makeObfSourceJar = false
+    mappings = project.mcpVersion
+}
+
+jar.manifest.attributes(
+        'FMLCorePluginContainsFMLMod': true,
+        'FMLCorePlugin': 'blu3.ruhamaplus.mixin.mixins.LoadingPlugin',
+        'ForceLoadAsMod': true,
+        'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+        'FMLAT': 'ruhamaplus_at.cfg' // this is so incredibly important to have
+)
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    jcenter()
+    maven { url = 'https://jitpack.io' }
+}
+
+dependencies {
+    compile ('org.spongepowered:mixin:0.7.11-SNAPSHOT'){
+        exclude module: 'launchwrapper'
+        exclude module: 'guava'
+        exclude module: 'gson'
+        exclude module: 'commons-io'
+        exclude module: 'log4j-core'
+    }
+    compile "com.github.ionar2:Alpine:1.9f"
+    compile group: 'net.jodah', name: 'typetools', version: '0.5.0'
+
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.19'
+    compile(group: 'org.reflections', name: 'reflections', version: '0.9.11') {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+
+    compile 'com.github.MrPowerGamerBR:TemmieWebhook:-SNAPSHOT'
+
+}
+
+mixin {
+    add sourceSets.main, 'mixins.ruhamaplus.refmap.json'
+}
+
+shadowJar {
+    dependencies {
+        include(dependency('org.spongepowered:mixin'))
+        include(dependency('com.github.MrPowerGamerBR:TemmieWebhook'))
+        include(dependency('com.github.ionar2:Alpine'))
+        include(dependency('net.jodah:typetools'))
+    }
+    exclude 'dummyThing'
+    exclude 'LICENSE.txt'
+
+    classifier = 'all'
+}
+
+build.dependsOn(shadowJar)
+
+reobf {
+    jar {
+        mappingType = 'SEARGE'
+    }
+    shadowJar {
+        mappingType = 'SEARGE'
+        classpath = sourceSets.main.compileClasspath
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+    rename '(.+_at.cfg)', 'META-INF/$1'
+
+
+
+}
+
+
+

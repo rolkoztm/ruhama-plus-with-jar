@@ -1,0 +1,15 @@
+[
+{
+  "modid": "ruhamaplus",
+  "name": "RuhamaPlus",
+  "description": "holy fuck i hate coding",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "credits": "Bleach for Ruhama, me for new shit",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

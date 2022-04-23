@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "compatibilityLevel": "JAVA_8",
+  "package": "blu3.ruhamaplus.mixin.mixins",
+  "refmap": "mixins.ruhamaplus.refmap.json",
+  "mixins": [
+  	"MixinContainerGui",
+  	"MixinNettyDecoder",
+  	"MixinPacketRead",
+  	"MixinPacketSend",
+    "MixinGuiMainMenu",
+    "MixinGuiPlayerTabOverlay",
+    "MixinAbstractClientPlayer",
+    "MixinPlayerControllerMP",
+    "MixinMovementInputFromOptions",
+    "MixinGuiNewChat",
+    "MixinEntity",
+    "MixinWorld",
+    "MixinEntityRenderer",
+    "minecraftforge.MixinEventBus"
+  ]
+}
